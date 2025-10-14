@@ -7,6 +7,7 @@ class CustomButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
   final bool isOutlined;
+  final bool fullWidth;
   final Color? backgroundColor;
   final Color? textColor;
   final double? width;
@@ -15,12 +16,14 @@ class CustomButton extends StatelessWidget {
   final BorderRadius? borderRadius;
   final Widget? leading;
   final Widget? trailing;
+  final IconData? icon;
 
   const CustomButton({
     required this.text,
     required this.onPressed,
     this.isLoading = false,
     this.isOutlined = false,
+    this.fullWidth = false,
     this.backgroundColor,
     this.textColor,
     this.width,
@@ -29,6 +32,7 @@ class CustomButton extends StatelessWidget {
     this.borderRadius,
     this.leading,
     this.trailing,
+    this.icon,
     super.key,
   });
 
@@ -36,10 +40,11 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveHeight = height ?? 48.0;
     final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(8);
+    final effectiveWidth = fullWidth ? double.infinity : width;
 
     if (isOutlined) {
       return SizedBox(
-        width: width,
+        width: effectiveWidth,
         height: effectiveHeight,
         child: OutlinedButton(
           onPressed: isLoading ? null : onPressed,
@@ -56,7 +61,7 @@ class CustomButton extends StatelessWidget {
     }
 
     return SizedBox(
-      width: width,
+      width: effectiveWidth,
       height: effectiveHeight,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
@@ -93,6 +98,19 @@ class CustomButton extends StatelessWidget {
         fontWeight: FontWeight.w600,
       ),
     );
+
+    // Support for icon parameter
+    if (icon != null) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 20),
+          const SizedBox(width: 8),
+          textWidget,
+        ],
+      );
+    }
 
     if (leading != null || trailing != null) {
       return Row(

@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                 // Phone Number Field
                 PhoneTextField(
                   controller: _phoneController,
-                  validator: Validators.validatePhone,
+                  validator: Validators.validatePhoneNumber,
                   onSubmitted: (_) => _handleLogin(),
                 ),
 
