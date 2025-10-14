@@ -1,0 +1,139 @@
+name: chatz
+description: A WhatsApp clone with microtransaction-enabled calls
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # UI & Design
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10+1
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  lottie: ^3.1.0
+
+  # Navigation
+  go_router: ^14.0.2
+
+  # Firebase
+  firebase_core: ^2.27.0
+  firebase_auth: ^4.17.8
+  cloud_firestore: ^4.15.8
+  firebase_storage: ^11.6.9
+  firebase_messaging: ^14.7.19
+  firebase_analytics: ^10.8.9
+
+  # Functional Programming & Data
+  dartz: ^0.10.1
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+  equatable: ^2.0.5
+
+  # Dependency Injection
+  get_it: ^7.6.7
+  injectable: ^2.3.5
+
+  # Network & API
+  dio: ^5.4.1
+  connectivity_plus: ^5.0.2
+  internet_connection_checker: ^1.0.0+1
+
+  # Local Storage
+  shared_preferences: ^2.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  flutter_secure_storage: ^9.0.0
+
+  # Media & Files
+  image_picker: ^1.0.7
+  file_picker: ^6.1.1
+  path_provider: ^2.1.2
+  permission_handler: ^11.3.0
+  image_cropper: ^5.0.1
+
+  # Communication
+  flutter_webrtc: ^0.9.48+hotfix.1
+  socket_io_client: ^2.0.3+1
+  agora_rtc_engine: ^6.3.2
+
+  # Payments
+  stripe_platform_interface: ^10.1.0
+  flutter_stripe: ^10.1.1
+  in_app_purchase: ^3.1.13
+
+  # Notifications
+  flutter_local_notifications: ^17.0.0
+
+  # Security & Encryption
+  encrypt: ^5.0.3
+  crypto: ^3.0.3
+
+  # Utilities
+  intl: ^0.19.0
+  uuid: ^4.3.3
+  url_launcher: ^6.2.5
+  share_plus: ^7.2.2
+  package_info_plus: ^5.0.1
+  device_info_plus: ^10.1.0
+
+  # Audio & Video
+  just_audio: ^0.9.37
+  video_player: ^2.8.3
+  record: ^5.0.4
+  audioplayers: ^6.0.0
+
+  # Contacts
+  contacts_service: ^0.6.3
+  flutter_contacts: ^1.1.7+1
+
+  # Logging & Error Tracking
+  logger: ^2.0.2+1
+  sentry_flutter: ^7.16.1
+
+  # Time & Date
+  timeago: ^3.6.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Code Generation
+  build_runner: ^2.4.8
+  freezed: ^2.4.7
+  json_serializable: ^6.7.1
+  riverpod_generator: ^2.3.11
+  injectable_generator: ^2.4.2
+
+  # Linting & Analysis
+  flutter_lints: ^3.0.1
+  very_good_analysis: ^5.1.0
+
+  # Testing
+  mocktail: ^1.0.3
+  fake_cloud_firestore: ^2.5.1
+  firebase_auth_mocks: ^0.13.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/
+
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
