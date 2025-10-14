@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/themes/app_theme.dart';
@@ -11,13 +12,22 @@ Future<void> main() async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase (skip for now to test UI)
-  // TODO: Configure Firebase for web in firebase_options.dart
-  // try {
-  //   await Firebase.initializeApp();
-  // } catch (e) {
-  //   debugPrint('Firebase initialization error: $e');
-  // }
+  // Initialize Firebase
+  // NOTE: Before running, configure Firebase:
+  // 1. Create Firebase project at https://console.firebase.google.com/
+  // 2. Run: dart pub global activate flutterfire_cli
+  // 3. Run: flutterfire configure
+  // OR manually update lib/firebase_options.dart with your config
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    debugPrint('✅ Firebase initialized successfully');
+  } catch (e) {
+    debugPrint('⚠️  Firebase initialization error: $e');
+    debugPrint('💡 To configure Firebase, see docs/FIREBASE_SETUP.md');
+    // Continue without Firebase for UI testing
+  }
 
   // Initialize dependency injection
   await initializeDependencies();

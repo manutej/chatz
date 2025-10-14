@@ -13,11 +13,12 @@ Future<void> initializeDependencies() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
-  // Firebase instances (commented out until Firebase is configured for web)
-  // TODO: Uncomment after configuring Firebase
-  // sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
-  // sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
-  // sl.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
+  // Firebase instances
+  // These will work once Firebase is configured
+  // See docs/FIREBASE_SETUP.md for configuration instructions
+  sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
 
   // Core services (to be implemented)
   // sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
