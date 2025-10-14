@@ -1,0 +1,245 @@
+name: flutter-feature-complete
+description: Complete Flutter feature development from design to deployment
+created: 2025-10-14T19:00:00Z
+version: 1.0
+project: chatz
+
+steps:
+  - id: design-feature-ui
+    description: Design Flutter UI components based on wireframes
+    suggested_agent: flutter-app-builder
+    estimated_tokens: 18000
+    estimated_time_minutes: 15
+    inputs:
+      - wireframe_designs
+      - design_system
+    outputs:
+      - ui_mockups
+      - component_structure
+      - widget_tree
+    notes: |
+      - Review wireframes in /Users/manu/Downloads/whatsapp-clone-wireframes.tsx
+      - Follow design system in docs/DESIGN_SYSTEM.md
+      - Use existing AppColors and AppTheme
+      - Create reusable widgets in lib/shared/widgets/
+
+  - id: implement-ui-components
+    description: Implement Flutter widgets and screens with state management
+    suggested_agent: flutter-app-builder
+    estimated_tokens: 22000
+    estimated_time_minutes: 18
+    depends_on:
+      - design-feature-ui
+    inputs:
+      - widget_tree
+      - component_structure
+    outputs:
+      - widget_files
+      - page_files
+      - provider_files
+    notes: |
+      - Use Riverpod for state management
+      - Follow Clean Architecture (presentation/domain/data)
+      - Place in lib/features/<feature_name>/
+      - Ensure hot reload compatibility
+
+  - id: write-widget-tests
+    description: Create comprehensive widget tests with golden tests
+    suggested_agent: test-engineer
+    estimated_tokens: 16000
+    estimated_time_minutes: 12
+    depends_on:
+      - implement-ui-components
+    inputs:
+      - widget_files
+      - page_files
+    outputs:
+      - widget_test_files
+      - golden_test_files
+      - test_coverage_report
+    notes: |
+      - Use flutter_test package
+      - Create golden tests for visual regression
+      - Place in test/widget/<feature_name>/
+      - Aim for 80%+ coverage
+
+  - id: integrate-firebase
+    description: Integrate Firebase services (Auth, Firestore, Storage)
+    suggested_agent: code-craftsman
+    estimated_tokens: 14000
+    estimated_time_minutes: 11
+    depends_on:
+      - implement-ui-components
+    inputs:
+      - firebase_config
+      - data_models
+    outputs:
+      - repository_files
+      - data_source_files
+      - use_case_files
+    notes: |
+      - Use Firebase Auth for authentication
+      - Firestore for real-time data
+      - Storage for media files
+      - Follow repository pattern
+
+  - id: implement-state-management
+    description: Set up Riverpod providers and state logic
+    suggested_agent: flutter-app-builder
+    estimated_tokens: 12000
+    estimated_time_minutes: 10
+    depends_on:
+      - integrate-firebase
+      - implement-ui-components
+    inputs:
+      - use_case_files
+      - widget_files
+    outputs:
+      - provider_files
+      - notifier_files
+      - state_files
+    notes: |
+      - Use Riverpod 2.x patterns
+      - Implement AsyncNotifier for async state
+      - Create providers in lib/features/<feature>/presentation/providers/
+      - Handle loading, error, and data states
+
+  - id: add-navigation
+    description: Update router with new routes and navigation logic
+    suggested_agent: code-craftsman
+    estimated_tokens: 8000
+    estimated_time_minutes: 7
+    depends_on:
+      - implement-ui-components
+    inputs:
+      - page_files
+      - route_structure
+    outputs:
+      - updated_router
+      - navigation_logic
+    notes: |
+      - Update lib/core/router/app_router.dart
+      - Use go_router for navigation
+      - Add route parameters if needed
+      - Test deep linking
+
+  - id: test-integration
+    description: Create integration tests for complete feature flow
+    suggested_agent: test-engineer
+    estimated_tokens: 14000
+    estimated_time_minutes: 12
+    depends_on:
+      - implement-state-management
+      - add-navigation
+    inputs:
+      - provider_files
+      - repository_files
+    outputs:
+      - integration_test_files
+      - e2e_test_files
+    notes: |
+      - Use integration_test package
+      - Test complete user flows
+      - Mock Firebase services
+      - Place in integration_test/
+
+  - id: generate-documentation
+    description: Generate API docs and feature documentation
+    suggested_agent: docs-generator
+    estimated_tokens: 10000
+    estimated_time_minutes: 8
+    depends_on:
+      - implement-state-management
+      - write-widget-tests
+    inputs:
+      - source_code
+      - test_files
+    outputs:
+      - api_documentation
+      - feature_guide
+      - usage_examples
+    notes: |
+      - Generate dartdoc comments
+      - Create feature guide in docs/
+      - Add code examples
+      - Document public APIs
+
+  - id: performance-optimization
+    description: Optimize Flutter performance and bundle size
+    suggested_agent: code-trimmer
+    estimated_tokens: 12000
+    estimated_time_minutes: 10
+    depends_on:
+      - test-integration
+    inputs:
+      - widget_files
+      - build_output
+    outputs:
+      - optimized_code
+      - performance_report
+    notes: |
+      - Use const constructors where possible
+      - Optimize images and assets
+      - Lazy load routes
+      - Analyze bundle size
+
+  - id: commit-and-push
+    description: Commit feature with comprehensive message and push to Git
+    suggested_agent: git-genius
+    estimated_tokens: 6000
+    estimated_time_minutes: 5
+    depends_on:
+      - performance-optimization
+      - generate-documentation
+    inputs:
+      - all_changes
+      - test_results
+    outputs:
+      - git_commit
+      - git_push
+    notes: |
+      - Write detailed commit message
+      - Include feature description
+      - Reference issue/ticket if applicable
+      - Push to feature branch
+
+metadata:
+  total_steps: 10
+  total_estimated_tokens: 132000
+  total_estimated_time_minutes: 108
+  tags:
+    - flutter
+    - mobile
+    - frontend
+    - feature-development
+  author: claude-code
+  project_type: flutter_app
+  architecture: clean_architecture
+  state_management: riverpod
+
+execution:
+  strategy: sequential
+  optimization: balanced
+  parallel_opportunities:
+    - [write-widget-tests, integrate-firebase]
+    - [add-navigation, generate-documentation]
+
+context:
+  project_name: chatz
+  project_path: /Users/manu/Documents/LUXOR/chatz
+  architecture_style: clean_architecture
+  state_management: riverpod
+  router: go_router
+  backend: firebase
+  design_reference: /Users/manu/Downloads/whatsapp-clone-wireframes.tsx
+
+resources:
+  docs:
+    - docs/DESIGN_SYSTEM.md
+    - docs/RIVERPOD_REFERENCE.md
+    - docs/FIREBASE_SETUP.md
+    - docs/TDD_GUIDE.md
+  examples:
+    - lib/features/auth/presentation/pages/login_page.dart
+    - lib/features/home/presentation/pages/home_page.dart
+    - lib/shared/widgets/custom_button.dart
