@@ -11,14 +11,13 @@ Future<void> main() async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    debugPrint('Firebase initialization error: $e');
-    // In development, continue without Firebase
-    // In production, you might want to show an error screen
-  }
+  // Initialize Firebase (skip for now to test UI)
+  // TODO: Configure Firebase for web in firebase_options.dart
+  // try {
+  //   await Firebase.initializeApp();
+  // } catch (e) {
+  //   debugPrint('Firebase initialization error: $e');
+  // }
 
   // Initialize dependency injection
   await initializeDependencies();

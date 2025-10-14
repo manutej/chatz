@@ -31,23 +31,44 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Implement phone authentication logic
-      // await ref.read(authProvider.notifier).verifyPhoneNumber(
-      //   _phoneController.text,
-      // );
-
-      // Navigate to verification page
-      // context.push('/verify-phone', extra: _phoneController.text);
-
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 2));
 
       if (mounted) {
+        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Verification code sent!'),
+            content: Text('Login successful! (Demo mode - Firebase not configured)'),
             backgroundColor: AppColors.success,
+            duration: Duration(seconds: 2),
           ),
         );
+
+        // Navigate to home page after a brief delay
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          // For now, just show a dialog since home page is a placeholder
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Demo Mode'),
+              content: Text(
+                'You entered: ${_phoneController.text}\n\n'
+                'Firebase is not configured yet, so this is just a UI demo.\n\n'
+                'Next steps:\n'
+                '1. Configure Firebase\n'
+                '2. Implement authentication\n'
+                '3. Build chat features',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {

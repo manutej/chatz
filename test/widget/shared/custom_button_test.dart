@@ -152,7 +152,7 @@ void main() {
 
       // Act
       await tester.tap(find.byType(CustomButton));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       // Assert
       expect(pressCount, 0);

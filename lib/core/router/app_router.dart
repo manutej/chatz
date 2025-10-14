@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/auth/presentation/pages/login_page.dart' as auth;
+import '../../features/home/presentation/pages/home_page.dart';
 
 /// Application routing configuration
 class AppRouter {
@@ -31,7 +33,7 @@ class AppRouter {
 
   /// Router configuration
   static final GoRouter router = GoRouter(
-    initialLocation: splash,
+    initialLocation: home, // Bypassing login to explore app structure
     debugLogDiagnostics: true,
     routes: [
       // Splash Screen
@@ -52,7 +54,7 @@ class AppRouter {
       GoRoute(
         path: login,
         name: 'login',
-        builder: (context, state) => const LoginPage(),
+        builder: (context, state) => const auth.LoginPage(),
       ),
       GoRoute(
         path: verifyPhone,
@@ -222,12 +224,7 @@ class RegisterPage extends StatelessWidget {
       const Scaffold(body: Center(child: Text('Register')));
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('Home')));
-}
+// HomePage moved to lib/features/home/presentation/pages/home_page.dart
 
 class ChatDetailPage extends StatelessWidget {
   final String chatId;

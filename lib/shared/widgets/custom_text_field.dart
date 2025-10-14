@@ -125,8 +125,8 @@ class PhoneTextField extends StatelessWidget {
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(15),
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')), // Allow digits and +
+        LengthLimitingTextInputFormatter(16), // +15 digits max
       ],
     );
   }
