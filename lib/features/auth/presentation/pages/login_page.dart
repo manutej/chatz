@@ -1,165 +1,197 @@
 import 'package:flutter/material.dart';
-import '../../../../core/themes/app_colors.dart';
-import '../../../../core/utils/validators.dart';
-import '../../../../shared/widgets/custom_button.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:chatz/features/auth/presentation/providers/auth_providers.dart';
+import 'package:chatz/features/auth/presentation/providers/auth_state.dart';
+import 'package:chatz/features/auth/presentation/widgets/social_login_buttons.dart';
 
-/// Login page for phone number authentication
-class LoginPage extends StatefulWidget {
+/// Login page with multiple authentication options
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
-  bool _isLoading = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleLogin() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login successful! (Demo mode - Firebase not configured)'),
-            backgroundColor: AppColors.success,
-            duration: Duration(seconds: 2),
-          ),
-        );
-
-        // Navigate to home page after a brief delay
-        await Future.delayed(const Duration(milliseconds: 500));
-        if (mounted) {
-          // For now, just show a dialog since home page is a placeholder
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Demo Mode'),
-              content: Text(
-                'You entered: ${_phoneController.text}\n\n'
-                'Firebase is not configured yet, so this is just a UI demo.\n\n'
-                'Next steps:\n'
-                '1. Configure Firebase\n'
-                '2. Implement authentication\n'
-                '3. Build chat features',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
+  void _handleEmailLogin() {
+    if (_formKey.currentState?.validate() ?? false) {
+      ref.read(authNotifierProvider.notifier).signInWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
           );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
     }
+  }
+
+  void _handleGoogleLogin() {
+    ref.read(authNotifierProvider.notifier).signInWithGoogleAccount();
+  }
+
+  void _handleAppleLogin() {
+    ref.read(authNotifierProvider.notifier).signInWithAppleAccount();
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+
+    ref.listen<AuthState>(authNotifierProvider, (previous, next) {
+      next.maybeWhen(
+        authenticated: (user) {
+          context.go('/home');
+        },
+        profileIncomplete: (user) {
+          context.go('/profile-setup');
+        },
+        error: (message) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        },
+        orElse: () {},
+      );
+    });
+
+    final isLoading = authState.maybeWhen(
+      loading: () => true,
+      orElse: () => false,
+    );
+
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 60),
-
-                // App Logo or Icon
+                // App Logo or Title
                 Icon(
-                  Icons.chat_bubble,
+                  Icons.chat_bubble_rounded,
                   size: 80,
-                  color: AppColors.primary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-
-                const SizedBox(height: 24),
-
-                // Welcome Text
+                const SizedBox(height: 16),
                 Text(
                   'Welcome to Chatz',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimaryLight,
                       ),
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
-                  'Enter your phone number to continue',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondaryLight,
+                  'Sign in to continue',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: 48),
 
-                // Phone Number Field
-                PhoneTextField(
-                  controller: _phoneController,
-                  validator: Validators.validatePhoneNumber,
-                  onSubmitted: (_) => _handleLogin(),
+                // Email/Password Form
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Theme.of(context).colorScheme.surface,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Theme.of(context).colorScheme.surface,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: FilledButton(
+                          onPressed: isLoading ? null : _handleEmailLogin,
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text('Sign In'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 24),
 
-                // Login Button
-                CustomButton(
-                  text: 'Send Verification Code',
-                  onPressed: _handleLogin,
-                  isLoading: _isLoading,
-                ),
-
-                const SizedBox(height: 16),
-
-                // Terms and Privacy
-                Text(
-                  'By continuing, you agree to our Terms of Service and Privacy Policy',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondaryLight,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: 40),
-
-                // Alternative Login Methods
+                // Divider
                 Row(
                   children: [
                     const Expanded(child: Divider()),
@@ -167,9 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
                         'OR',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.textSecondaryLight,
-                            ),
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),
                     const Expanded(child: Divider()),
@@ -178,19 +208,50 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 24),
 
-                // Google Sign In Button
-                CustomButton(
-                  text: 'Continue with Google',
-                  onPressed: () {
-                    // TODO: Implement Google Sign In
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Google Sign In coming soon!'),
-                      ),
-                    );
-                  },
-                  isOutlined: true,
-                  leading: const Icon(Icons.g_mobiledata, size: 24),
+                // Social Login Buttons
+                SocialLoginButtons(
+                  onGooglePressed: _handleGoogleLogin,
+                  onApplePressed: _handleAppleLogin,
+                  isLoading: isLoading,
+                ),
+
+                const SizedBox(height: 24),
+
+                // Phone Login Button
+                OutlinedButton.icon(
+                  onPressed: isLoading
+                      ? null
+                      : () => context.push('/phone-verification'),
+                  icon: const Icon(Icons.phone),
+                  label: const Text('Continue with Phone'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Register Link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account? ",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    TextButton(
+                      onPressed: isLoading
+                          ? null
+                          : () => context.push('/register'),
+                      child: const Text('Sign Up'),
+                    ),
+                  ],
                 ),
               ],
             ),

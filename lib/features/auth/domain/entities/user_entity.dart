@@ -1,69 +1,94 @@
 import 'package:equatable/equatable.dart';
 
-/// User entity representing a user in the domain layer
+/// User entity representing the domain model
+/// This is the core business object independent of data layer implementations
 class UserEntity extends Equatable {
   final String id;
-  final String phoneNumber;
-  final String? displayName;
   final String? email;
+  final String? phoneNumber;
+  final String? displayName;
   final String? photoUrl;
-  final String? about;
-  final bool isOnline;
-  final DateTime? lastSeen;
+  final String? bio;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? lastSeen;
+  final bool isOnline;
+  final bool isEmailVerified;
+  final bool isPhoneVerified;
+  final List<String> deviceTokens;
+  final Map<String, dynamic>? metadata;
 
   const UserEntity({
     required this.id,
-    required this.phoneNumber,
-    this.displayName,
     this.email,
+    this.phoneNumber,
+    this.displayName,
     this.photoUrl,
-    this.about,
-    required this.isOnline,
-    this.lastSeen,
+    this.bio,
     required this.createdAt,
-    required this.updatedAt,
+    this.lastSeen,
+    this.isOnline = false,
+    this.isEmailVerified = false,
+    this.isPhoneVerified = false,
+    this.deviceTokens = const [],
+    this.metadata,
   });
 
-  /// Create a copy of the entity with updated fields
-  UserEntity copyWith({
-    String? id,
-    String? phoneNumber,
-    String? displayName,
-    String? email,
-    String? photoUrl,
-    String? about,
-    bool? isOnline,
-    DateTime? lastSeen,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return UserEntity(
-      id: id ?? this.id,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      displayName: displayName ?? this.displayName,
-      email: email ?? this.email,
-      photoUrl: photoUrl ?? this.photoUrl,
-      about: about ?? this.about,
-      isOnline: isOnline ?? this.isOnline,
-      lastSeen: lastSeen ?? this.lastSeen,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
+  /// Check if user has completed profile setup
+  bool get hasCompletedProfile => displayName != null && displayName!.isNotEmpty;
+
+  /// Get user's primary identifier (phone or email)
+  String? get primaryIdentifier => phoneNumber ?? email;
+
+  /// Check if user has any verification
+  bool get isVerified => isEmailVerified || isPhoneVerified;
 
   @override
   List<Object?> get props => [
         id,
+        email,
         phoneNumber,
         displayName,
-        email,
         photoUrl,
-        about,
-        isOnline,
-        lastSeen,
+        bio,
         createdAt,
-        updatedAt,
+        lastSeen,
+        isOnline,
+        isEmailVerified,
+        isPhoneVerified,
+        deviceTokens,
+        metadata,
       ];
+
+  /// Create a copy with updated fields
+  UserEntity copyWith({
+    String? id,
+    String? email,
+    String? phoneNumber,
+    String? displayName,
+    String? photoUrl,
+    String? bio,
+    DateTime? createdAt,
+    DateTime? lastSeen,
+    bool? isOnline,
+    bool? isEmailVerified,
+    bool? isPhoneVerified,
+    List<String>? deviceTokens,
+    Map<String, dynamic>? metadata,
+  }) {
+    return UserEntity(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      displayName: displayName ?? this.displayName,
+      photoUrl: photoUrl ?? this.photoUrl,
+      bio: bio ?? this.bio,
+      createdAt: createdAt ?? this.createdAt,
+      lastSeen: lastSeen ?? this.lastSeen,
+      isOnline: isOnline ?? this.isOnline,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
+      isPhoneVerified: isPhoneVerified ?? this.isPhoneVerified,
+      deviceTokens: deviceTokens ?? this.deviceTokens,
+      metadata: metadata ?? this.metadata,
+    );
+  }
 }
