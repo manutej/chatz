@@ -81,3 +81,25 @@ class TimeoutFailure extends Failure {
 class UnknownFailure extends Failure {
   const UnknownFailure([super.message = 'Unknown error occurred']);
 }
+
+/// Firestore database failures
+class FirestoreFailure extends Failure {
+  const FirestoreFailure([super.message = 'Database error occurred']);
+}
+
+/// Chat not found failures
+class ChatNotFoundFailure extends Failure {
+  const ChatNotFoundFailure([super.message = 'Chat not found']);
+}
+
+/// Message not found failures
+class MessageNotFoundFailure extends Failure {
+  const MessageNotFoundFailure([super.message = 'Message not found']);
+}
+
+/// Unauthorized chat access failures
+class UnauthorizedChatAccessFailure extends Failure {
+  const UnauthorizedChatAccessFailure([
+    super.message = 'You do not have access to this chat',
+  ]);
+}

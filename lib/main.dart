@@ -6,6 +6,7 @@ import 'firebase_options.dart';
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/themes/app_theme.dart';
+import 'shared/services/notification_service.dart';
 
 /// Main entry point of the application
 Future<void> main() async {
@@ -31,6 +32,16 @@ Future<void> main() async {
 
   // Initialize dependency injection
   await initializeDependencies();
+
+  // Initialize notification service after DI is ready
+  try {
+    final notificationService = sl<NotificationService>();
+    await notificationService.initialize();
+    debugPrint('✅ Notification service initialized');
+  } catch (e) {
+    debugPrint('⚠️  Notification service initialization error: $e');
+    // Continue without notifications
+  }
 
   // Set system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(

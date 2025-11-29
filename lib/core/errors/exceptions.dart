@@ -74,3 +74,25 @@ class NotFoundException extends AppException {
 class TimeoutException extends AppException {
   const TimeoutException([super.message = 'Request timeout']);
 }
+
+/// Firestore exception
+class FirestoreException extends AppException {
+  const FirestoreException([super.message = 'Database error occurred']);
+}
+
+/// Chat not found exception
+class ChatNotFoundException extends AppException {
+  const ChatNotFoundException([super.message = 'Chat not found']);
+}
+
+/// Message not found exception
+class MessageNotFoundException extends AppException {
+  const MessageNotFoundException([super.message = 'Message not found']);
+}
+
+/// Unauthorized chat access exception
+class UnauthorizedChatAccessException extends AppException {
+  const UnauthorizedChatAccessException([
+    super.message = 'You do not have access to this chat',
+  ]);
+}
