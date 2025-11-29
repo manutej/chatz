@@ -1,0 +1,1 @@
+../../../.claude/commands/diagram-from-file.md

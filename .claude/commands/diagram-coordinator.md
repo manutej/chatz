@@ -1,0 +1,1 @@
+../../../.claude/commands/diagram-coordinator.md
